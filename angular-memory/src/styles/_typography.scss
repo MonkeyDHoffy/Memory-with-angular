@@ -1,0 +1,11 @@
+$font-ui: "Manrope", "Segoe UI", sans-serif;
+$font-display: "Red Rose", Georgia, serif;
+
+@mixin ready-title {
+  font-family: $font-display;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  font-size: clamp(2.35rem, 10vw, 8.75rem); // max 140px
+}

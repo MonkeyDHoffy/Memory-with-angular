@@ -1,0 +1,93 @@
+<main class="settings-page">
+    <section class="settings-layout" aria-label="Game settings">
+        <section class="settings-form-panel">
+            <header class="heading-block">
+                <h1>Settings</h1>
+                <span class="heading-line" aria-hidden="true"></span>
+            </header>
+
+            <section class="option-group" aria-label="Game themes">
+                <h2>
+                    <img src="/assets/settings/gamethemes.png" alt="" aria-hidden="true" />
+                    Game themes
+                </h2>
+
+                <div class="option-list">
+                    @for (theme of themeOptions; track theme.id) {
+                        <label class="option-row option-row--theme" [class.is-selected]="selectedTheme() === theme.id">
+                            <input
+                                type="radio"
+                                name="theme"
+                                [value]="theme.id"
+                                [checked]="selectedTheme() === theme.id"
+                                (change)="chooseTheme(theme.id)"
+                            />
+                            <span>{{ theme.label }}</span>
+                        </label>
+                    }
+                </div>
+            </section>
+
+            <section class="option-group" aria-label="Choose player">
+                <h2>
+                    <img src="/assets/settings/chess_pawn.png" alt="" aria-hidden="true" />
+                    Choose player
+                </h2>
+
+                <div class="option-list">
+                    @for (player of playerOptions; track player.id) {
+                        <label class="option-row">
+                            <input
+                                type="radio"
+                                name="player"
+                                [value]="player.id"
+                                [checked]="selectedPlayer() === player.id"
+                                (change)="choosePlayer(player.id)"
+                            />
+                            <span>{{ player.label }}</span>
+                        </label>
+                    }
+                </div>
+            </section>
+
+            <section class="option-group" aria-label="Board size">
+                <h2>
+                    <img src="/assets/settings/boardsize.png" alt="" aria-hidden="true" />
+                    Board size
+                </h2>
+
+                <div class="option-list">
+                    @for (size of boardSizeOptions; track size.id) {
+                        <label class="option-row">
+                            <input
+                                type="radio"
+                                name="board-size"
+                                [value]="size.id"
+                                [checked]="selectedBoardSize() === size.id"
+                                (change)="chooseBoardSize(size.id)"
+                            />
+                            <span>{{ size.label }}</span>
+                        </label>
+                    }
+                </div>
+            </section>
+        </section>
+
+        <section class="preview-panel" aria-label="Theme preview">
+            <div class="preview-frame">
+                <img [src]="selectedThemePreview()" [alt]="selectedTheme() + ' preview'" />
+            </div>
+
+            <footer class="selection-summary" aria-label="Current selection summary">
+                <span>Game theme</span>
+                <span class="divider" aria-hidden="true"></span>
+                <span>Player</span>
+                <span class="divider" aria-hidden="true"></span>
+                <span>Board size</span>
+                <button type="button" class="start-button">
+                    <img src="/assets/settings/small button.png" alt="Start" />
+                </button>
+            </footer>
+        </section>
+    </section>
+</main>
