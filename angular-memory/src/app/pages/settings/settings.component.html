@@ -1,11 +1,11 @@
 <main class="settings-page">
-    <section class="settings-layout" aria-label="Game settings">
-        <section class="settings-form-panel">
-            <header class="heading-block">
-                <h1>Settings</h1>
-                <span class="heading-line" aria-hidden="true"></span>
-            </header>
+    <header class="page-heading">
+        <h1>Settings</h1>
+        <span class="heading-line" aria-hidden="true"></span>
+    </header>
 
+    <section class="settings-cards" aria-label="Game settings">
+        <section class="left-card">
             <section class="option-group" aria-label="Game themes">
                 <h2>
                     <img src="/assets/settings/gamethemes.png" alt="" aria-hidden="true" />
@@ -14,16 +14,11 @@
 
                 <div class="option-list">
                     @for (theme of themeOptions; track theme.id) {
-                        <label class="option-row option-row--theme" [class.is-selected]="selectedTheme() === theme.id">
-                            <input
-                                type="radio"
-                                name="theme"
-                                [value]="theme.id"
-                                [checked]="selectedTheme() === theme.id"
-                                (change)="chooseTheme(theme.id)"
-                            />
-                            <span>{{ theme.label }}</span>
-                        </label>
+                    <label class="option-row option-row--theme" [class.is-selected]="selectedTheme() === theme.id">
+                        <input type="radio" name="theme" [value]="theme.id" [checked]="selectedTheme() === theme.id"
+                            (change)="chooseTheme(theme.id)" />
+                        <span>{{ theme.label }}</span>
+                    </label>
                     }
                 </div>
             </section>
@@ -36,16 +31,11 @@
 
                 <div class="option-list">
                     @for (player of playerOptions; track player.id) {
-                        <label class="option-row">
-                            <input
-                                type="radio"
-                                name="player"
-                                [value]="player.id"
-                                [checked]="selectedPlayer() === player.id"
-                                (change)="choosePlayer(player.id)"
-                            />
-                            <span>{{ player.label }}</span>
-                        </label>
+                    <label class="option-row" [class.is-selected]="selectedPlayer() === player.id">
+                        <input type="radio" name="player" [value]="player.id" [checked]="selectedPlayer() === player.id"
+                            (change)="choosePlayer(player.id)" />
+                        <span>{{ player.label }}</span>
+                    </label>
                     }
                 </div>
             </section>
@@ -58,22 +48,17 @@
 
                 <div class="option-list">
                     @for (size of boardSizeOptions; track size.id) {
-                        <label class="option-row">
-                            <input
-                                type="radio"
-                                name="board-size"
-                                [value]="size.id"
-                                [checked]="selectedBoardSize() === size.id"
-                                (change)="chooseBoardSize(size.id)"
-                            />
-                            <span>{{ size.label }}</span>
-                        </label>
+                    <label class="option-row" [class.is-selected]="selectedBoardSize() === size.id">
+                        <input type="radio" name="board-size" [value]="size.id"
+                            [checked]="selectedBoardSize() === size.id" (change)="chooseBoardSize(size.id)" />
+                        <span>{{ size.label }}</span>
+                    </label>
                     }
                 </div>
             </section>
         </section>
 
-        <section class="preview-panel" aria-label="Theme preview">
+        <section class="right-card" aria-label="Theme preview">
             <div class="preview-frame">
                 <img [src]="selectedThemePreview()" [alt]="selectedTheme() + ' preview'" />
             </div>
