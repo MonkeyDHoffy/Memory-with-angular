@@ -60,16 +60,22 @@
 
         <section class="right-card" aria-label="Theme preview">
             <div class="preview-frame">
-                <img [src]="selectedThemePreview()" [alt]="selectedTheme() + ' preview'" />
+                <img class="preview-image" [class.is-hidden]="!previewVisible()" [src]="selectedThemePreview()"
+                    [alt]="selectedThemePreviewAlt()" />
             </div>
 
             <footer class="selection-summary" aria-label="Current selection summary">
-                <span>Game theme</span>
+                <span [class.is-placeholder]="themeSummary().isPlaceholder"
+                    [class.is-selected]="!themeSummary().isPlaceholder">{{
+                    themeSummary().label }}</span>
                 <span class="divider" aria-hidden="true"></span>
-                <span>Player</span>
+                <span [class.is-placeholder]="playerSummary().isPlaceholder"
+                    [class.is-selected]="!playerSummary().isPlaceholder">{{ playerSummary().label }}</span>
                 <span class="divider" aria-hidden="true"></span>
-                <span>Board size</span>
-                <button type="button" class="start-button">
+                <span [class.is-placeholder]="boardSizeSummary().isPlaceholder"
+                    [class.is-selected]="!boardSizeSummary().isPlaceholder">{{ boardSizeSummary().label }}</span>
+                <button type="button" class="start-button" [disabled]="!canStartGame()"
+                    [attr.aria-disabled]="!canStartGame()">
                     <img src="/assets/settings/small button.png" alt="Start" />
                 </button>
             </footer>
