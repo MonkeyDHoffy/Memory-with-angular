@@ -75,7 +75,8 @@
                 <span [class.is-placeholder]="boardSizeSummary().isPlaceholder"
                     [class.is-selected]="!boardSizeSummary().isPlaceholder">{{ boardSizeSummary().label }}</span>
                 <button type="button" class="start-button" [disabled]="!canStartGame()"
-                    [attr.aria-disabled]="!canStartGame()">
+                    [attr.aria-disabled]="!canStartGame()" [routerLink]="canStartGame() ? '/game' : null"
+                    [queryParams]="gameQueryParams()" aria-label="Start game">
                     <img src="/assets/settings/small button.png" alt="Start" />
                 </button>
             </footer>

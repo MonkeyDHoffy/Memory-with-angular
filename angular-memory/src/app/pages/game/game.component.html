@@ -1,0 +1,67 @@
+<main class="game-page" [class.theme-code-vibe]="theme() === 'code-vibes'" [class.theme-gaming]="theme() === 'gaming'"
+    [class.theme-da-projects]="theme() === 'da-projects'" [class.theme-foods]="theme() === 'foods'"
+    aria-label="Memory game board">
+    <header class="game-header">
+        <section class="scoreboard" aria-label="Player scores">
+            <span class="score score-blue">
+                <img class="score-icon" [src]="bluePlayerImage()" alt="" aria-hidden="true" />
+                Blue {{ blueScore() }}
+            </span>
+            <span class="score score-orange">
+                <img class="score-icon" [src]="orangePlayerImage()" alt="" aria-hidden="true" />
+                Orange {{ orangeScore() }}
+            </span>
+        </section>
+
+        <p class="current-player" aria-live="polite">
+            Current player:
+            <span [class]="currentPlayerBadgeClass()">
+                <img class="player-indicator" [src]="currentPlayerSymbol()" alt="" aria-hidden="true" />
+            </span>
+        </p>
+
+        <button type="button" class="exit-button" (click)="openExitDialog()" (mouseenter)="setExitButtonHover(true)"
+            (mouseleave)="setExitButtonHover(false)" aria-label="Exit game">
+            <img [src]="activeExitButtonImage()" alt="" aria-hidden="true" />
+        </button>
+    </header>
+
+    <section class="board" [class.board--size-24]="boardSize() === 24" [class.board--size-36]="boardSize() === 36"
+        aria-label="Cards">
+        @for (card of cards(); track card.id) {
+        <button type="button" class="memory-card" [class.is-flipped]="isCardFlipped(card.id)" (click)="revealCard(card)"
+            [disabled]="isCardDisabled(card.id)" [attr.aria-pressed]="isCardFlipped(card.id)"
+            [attr.aria-label]="isCardFlipped(card.id) ? 'Hide card' : 'Reveal card'">
+            <span class="card-face card-back">
+                <img [src]="backImage()" alt="" aria-hidden="true" />
+            </span>
+            <span class="card-face card-front">
+                <img [src]="card.frontImage" [style.filter]="card.frontFilter" alt="" aria-hidden="true" />
+            </span>
+        </button>
+        }
+    </section>
+</main>
+
+@if (showExitDialog()) {
+<section class="exit-overlay" role="dialog" aria-modal="true" aria-labelledby="exit-title">
+    <article class="exit-dialog">
+        <h2 id="exit-title">Are you sure you want to quit the game?</h2>
+        <div class="exit-actions">
+            <button type="button" class="action-image" (click)="closeExitDialog()"
+                (mouseenter)="setBackButtonHover(true)" (mouseleave)="setBackButtonHover(false)"
+                aria-label="Back to game">
+                <img [src]="activeBackButtonImage()" alt="" aria-hidden="true" />
+            </button>
+            @if (yesQuitButtonImage()) {
+            <a class="action-image" routerLink="/settings" (mouseenter)="setYesQuitButtonHover(true)"
+                (mouseleave)="setYesQuitButtonHover(false)" aria-label="Yes, quit the game">
+                <img [src]="activeYesQuitButtonImage()" alt="" aria-hidden="true" />
+            </a>
+            } @else {
+            <a class="action action-secondary" routerLink="/settings">Exit game</a>
+            }
+        </div>
+    </article>
+</section>
+}

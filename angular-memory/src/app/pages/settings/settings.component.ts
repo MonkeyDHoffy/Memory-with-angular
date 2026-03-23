@@ -1,4 +1,5 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 type ThemeId = 'code-vibes' | 'gaming' | 'da-projects' | 'foods';
 type PlayerId = 'blue' | 'orange';
@@ -27,6 +28,7 @@ type SelectionSummary = {
 
 @Component({
   selector: 'app-settings',
+  imports: [RouterLink],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
 })
@@ -126,6 +128,18 @@ export class SettingsComponent {
   protected readonly canStartGame = computed(
     () => this.selectedTheme() !== null && this.selectedPlayer() !== null && this.selectedBoardSize() !== null,
   );
+
+  protected readonly gameQueryParams = computed(() => {
+    const boardSize = this.selectedBoardSize();
+    const player = this.selectedPlayer();
+    const theme = this.selectedTheme();
+
+    if (boardSize === null || player === null || theme === null) {
+      return null;
+    }
+
+    return { boardSize, player, theme };
+  });
 
   protected chooseTheme(themeId: ThemeId): void {
     this.selectedTheme.set(themeId);

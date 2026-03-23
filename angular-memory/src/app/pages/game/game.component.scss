@@ -1,0 +1,339 @@
+.game-page.theme-code-vibe {
+  --cv-bg: #303338;
+  --cv-panel: #36444a;
+  --cv-text: #f0f3f5;
+  --cv-accent: #57d1c5;
+  --cv-blue: #2ca0f4;
+  --cv-orange: #f29c3f;
+
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  color: var(--cv-text);
+  background:
+    radial-gradient(1200px 700px at 50% -15%, rgba(98, 110, 119, 0.22), transparent 70%),
+    linear-gradient(180deg, #2f3338 0%, var(--cv-bg) 100%);
+  font-family: 'Red Rose', Georgia, serif;
+  padding: clamp(1rem, 3vw, 1.8rem);
+}
+
+.game-page.theme-gaming {
+  --cv-bg: #2c5a71;
+  --cv-panel: #596582;
+  --cv-text: #f4f6ff;
+  --cv-accent: #f42e88;
+  --cv-blue: #3ea7ff;
+  --cv-orange: #ff9a3d;
+
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  color: var(--cv-text);
+  background:
+    radial-gradient(900px 480px at 50% -10%, rgba(255, 255, 255, 0.09), transparent 72%),
+    linear-gradient(180deg, #2d5b72 0%, #2c5a71 100%);
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  padding: clamp(1rem, 3vw, 1.8rem);
+}
+
+.game-page.theme-da-projects {
+  --cv-bg: #141c2e;
+  --cv-panel: #1e2a42;
+  --cv-text: #e8ecf4;
+  --cv-accent: #4f87ff;
+  --cv-blue: #4f87ff;
+  --cv-orange: #ff9052;
+
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  color: var(--cv-text);
+  background:
+    radial-gradient(1000px 500px at 50% -10%, rgba(79, 135, 255, 0.12), transparent 70%),
+    linear-gradient(180deg, #18213a 0%, var(--cv-bg) 100%);
+  font-family: 'Figtree', 'Segoe UI', sans-serif;
+  padding: clamp(1rem, 3vw, 1.8rem);
+}
+
+.game-page.theme-foods {
+  --cv-bg: #ffffff;
+  --cv-panel: #ffffff;
+  --cv-text: #6d3f1f;
+  --cv-accent: #ff9a3d;
+  --cv-blue: #2f9cf6;
+  --cv-orange: #f08b2f;
+
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  color: var(--cv-text);
+  background: #ffffff;
+  font-family: 'Klee One', 'Segoe UI', sans-serif;
+  padding: clamp(1rem, 3vw, 1.8rem);
+}
+
+.game-page.theme-foods .game-header {
+  background: #f0e5d9;
+  border-radius: 6px;
+  padding: 0.65rem 0.9rem;
+}
+
+.game-page.theme-foods .scoreboard {
+  border-radius: 4px;
+}
+
+.game-header {
+
+  width: min(100%, 980px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.scoreboard {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.95rem;
+  background: var(--cv-panel);
+  padding: 0.75rem 0.9rem;
+  font-weight: 700;
+}
+
+.score {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 1.05rem;
+}
+
+.score-blue {
+  color: var(--cv-blue);
+}
+
+.score-orange {
+  color: var(--cv-orange);
+}
+
+.score-icon {
+  width: 1rem;
+  height: 1rem;
+  object-fit: contain;
+}
+
+.current-player {
+  margin: 0;
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: clamp(1rem, 2vw, 1.9rem);
+  font-weight: 600;
+}
+
+.player-indicator {
+  width: 1.15rem;
+  height: 1.15rem;
+  object-fit: contain;
+}
+
+.player-indicator-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  min-width: 1.35rem;
+  min-height: 1.35rem;
+}
+
+.game-page.theme-gaming .player-indicator-badge {
+  padding: 0.12rem;
+}
+
+.game-page.theme-gaming .player-indicator-badge--blue {
+  background: #279df6;
+}
+
+.game-page.theme-gaming .player-indicator-badge--orange {
+  background: #f0892f;
+}
+
+.exit-button {
+  justify-self: end;
+  display: inline-block;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.exit-button:hover {
+  transform: translateY(-1px);
+}
+
+.exit-button img {
+  display: block;
+  width: clamp(132px, 18vw, 168px);
+  height: auto;
+}
+
+.board {
+  width: min(100%, 540px);
+  margin: clamp(1.6rem, 6vh, 3.5rem) auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(64px, 1fr));
+  gap: clamp(0.55rem, 1.7vw, 0.9rem);
+}
+
+.board.board--size-24,
+.board.board--size-36 {
+  width: min(100%, 760px);
+  grid-template-columns: repeat(6, minmax(64px, 1fr));
+}
+
+.memory-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  perspective: 900px;
+}
+
+.memory-card:disabled {
+  cursor: default;
+}
+
+.memory-card:focus-visible {
+  outline: 2px solid var(--cv-accent);
+  outline-offset: 4px;
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 2px;
+  backface-visibility: hidden;
+  transition: transform 260ms ease;
+  overflow: hidden;
+}
+
+.card-face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-front {
+  transform: rotateY(180deg);
+}
+
+.memory-card.is-flipped .card-back {
+  transform: rotateY(180deg);
+}
+
+.memory-card.is-flipped .card-front {
+  transform: rotateY(0deg);
+}
+
+.exit-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 29, 32, 0.62);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.exit-dialog {
+  width: min(100%, 440px);
+  background: #ececec;
+  color: #2f3338;
+  padding: 2rem 1.6rem;
+  text-align: center;
+}
+
+.exit-dialog h2 {
+  margin: 0 0 1.8rem;
+  font-size: clamp(1.05rem, 3.2vw, 1.1rem);
+  line-height: 1.35;
+}
+
+.exit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.action-image {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.action-image img {
+  display: block;
+  width: clamp(128px, 20vw, 180px);
+  height: auto;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 0.7rem 1rem;
+  min-width: 7.4rem;
+  font-weight: 700;
+  border: 1px solid var(--cv-accent);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.action-primary {
+  color: #dffaf4;
+  background: var(--cv-accent);
+}
+
+.action-secondary {
+  color: #37c8b6;
+  background: transparent;
+}
+
+@media (max-width: 900px) {
+  .game-header {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .scoreboard,
+  .current-player,
+  .exit-button {
+    justify-self: center;
+  }
+
+}
+
+@media (max-width: 600px) {
+  .board {
+    width: min(100%, 420px);
+    margin-top: clamp(1.1rem, 3.5vh, 2rem);
+    gap: 0.55rem;
+  }
+
+  .score {
+    font-size: 0.96rem;
+  }
+
+  .current-player {
+    font-size: 1.05rem;
+  }
+}
