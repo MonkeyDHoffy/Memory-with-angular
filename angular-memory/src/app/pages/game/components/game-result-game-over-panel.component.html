@@ -1,0 +1,18 @@
+<article class="result-panel result-panel--game-over" [class.result-panel--gaming]="theme() === 'gaming'"
+    [class.result-panel--da-projects]="theme() === 'da-projects'" [class.result-panel--foods]="theme() === 'foods'">
+    @if (resultThemeLabelImage(); as resultThemeLabel) {
+    <img class="result-theme-label" [src]="resultThemeLabel" alt="" aria-hidden="true" />
+    }
+    <h2 class="game-over-title">Game over</h2>
+    <p class="result-subtitle">Final score</p>
+    <p class="result-scoreline">
+        <span class="result-score result-score--blue">
+            <img class="result-score-icon" [src]="gameOverBlueScoreImage()" alt="" aria-hidden="true" />
+            {{ blueScore() }}
+        </span>
+        <span class="result-score result-score--orange">
+            <img class="result-score-icon" [src]="gameOverOrangeScoreImage()" alt="" aria-hidden="true" />
+            {{ orangeScore() }}
+        </span>
+    </p>
+</article>

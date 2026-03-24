@@ -51,48 +51,15 @@
     [class.result-overlay--stage-game-over]="gameStage() === 'game-over'"
     [class.result-overlay--stage-winner]="gameStage() === 'winner'" aria-live="polite">
     @if (gameStage() === 'game-over') {
-    <article class="result-panel result-panel--game-over" [class.result-panel--gaming]="theme() === 'gaming'"
-        [class.result-panel--da-projects]="theme() === 'da-projects'" [class.result-panel--foods]="theme() === 'foods'">
-        @if (theme() === 'da-projects') {
-        <img class="result-theme-label" src="/assets/gamethemes/daprojects/label (1).png" alt="" aria-hidden="true" />
-        }
-        <h2 class="game-over-title">Game over</h2>
-        <p class="result-subtitle">Final score</p>
-        <p class="result-scoreline">
-            <span class="result-score result-score--blue">
-                <img class="result-score-icon"
-                    [src]="theme() === 'gaming' || theme() === 'da-projects' || theme() === 'foods' ? '/assets/gamethemes/gamestheme/blue.png' : bluePlayerImage()"
-                    alt="" aria-hidden="true" />
-                {{ blueScore() }}
-            </span>
-            <span class="result-score result-score--orange">
-                <img class="result-score-icon"
-                    [src]="theme() === 'gaming' || theme() === 'da-projects' || theme() === 'foods' ? '/assets/gamethemes/gamestheme/orange.png' : orangePlayerImage()"
-                    alt="" aria-hidden="true" />
-                {{ orangeScore() }}
-            </span>
-        </p>
-    </article>
+    <app-game-result-game-over-panel [theme]="theme()" [resultThemeLabelImage]="resultThemeLabelImage()"
+        [gameOverBlueScoreImage]="gameOverBlueScoreImage()" [gameOverOrangeScoreImage]="gameOverOrangeScoreImage()"
+        [blueScore]="blueScore()" [orangeScore]="orangeScore()" />
     } @else {
-    <article class="result-panel result-panel--winner" [class.result-panel--gaming]="theme() === 'gaming'"
-        [class.result-panel--da-projects]="theme() === 'da-projects'" [class.result-panel--foods]="theme() === 'foods'">
-        @if (theme() === 'code-vibes' && showConfettiImage()) {
-        <img class="winner-confetti" [src]="confettiImage()" (error)="hideConfettiImage()" alt="" aria-hidden="true" />
-        }
-        @if (theme() === 'da-projects') {
-        <img class="result-theme-label" src="/assets/gamethemes/daprojects/label (1).png" alt="" aria-hidden="true" />
-        }
-        <p class="winner-subtitle">The winner is</p>
-        <h2 [class]="winnerTitleClass()">{{ winnerTitle() }}</h2>
-
-        @if (winnerSymbolImage(); as winnerSymbol) {
-        <img [class]="winnerSymbolClass()" [src]="winnerSymbol" alt="" aria-hidden="true" />
-        }
-
-        <a class="winner-back-button" [class.winner-back-button--gaming]="theme() === 'gaming'"
-            [class.winner-back-button--da-projects]="theme() === 'da-projects'"
-            [class.winner-back-button--foods]="theme() === 'foods'" routerLink="/">{{ winnerBackButtonLabel() }}</a>
-    </article>
+    <app-game-result-winner-panel [theme]="theme()" [shouldShowWinnerConfetti]="shouldShowWinnerConfetti()"
+        [confettiImage]="confettiImage()" [resultThemeLabelImage]="resultThemeLabelImage()"
+        [winnerTitleClass]="winnerTitleClass()" [winnerTitle]="winnerTitle()" [winnerSymbolImage]="winnerSymbolImage()"
+        [winnerSymbolClass]="winnerSymbolClass()" [winnerBackButtonLabel]="winnerBackButtonLabel()"
+        (confettiImageError)="hideConfettiImage()" />
     }
 </section>
 }

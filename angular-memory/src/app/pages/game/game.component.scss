@@ -227,10 +227,19 @@
   padding: 0;
   cursor: pointer;
   perspective: 900px;
+  transition: transform 160ms ease;
 }
 
 .memory-card:disabled {
   cursor: default;
+}
+
+.memory-card:not(.is-flipped):not(:disabled):hover {
+  transform: translateY(-2px);
+}
+
+.memory-card:not(.is-flipped):not(:disabled):hover .card-back img {
+  filter: brightness(1.07);
 }
 
 .memory-card:focus-visible {

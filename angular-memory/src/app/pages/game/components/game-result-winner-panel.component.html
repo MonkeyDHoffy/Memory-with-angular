@@ -1,0 +1,19 @@
+<article class="result-panel result-panel--winner" [class.result-panel--gaming]="theme() === 'gaming'"
+    [class.result-panel--da-projects]="theme() === 'da-projects'" [class.result-panel--foods]="theme() === 'foods'">
+    @if (shouldShowWinnerConfetti()) {
+    <img class="winner-confetti" [src]="confettiImage()" (error)="onConfettiImageError()" alt="" aria-hidden="true" />
+    }
+    @if (resultThemeLabelImage(); as resultThemeLabel) {
+    <img class="result-theme-label" [src]="resultThemeLabel" alt="" aria-hidden="true" />
+    }
+    <p class="winner-subtitle">The winner is</p>
+    <h2 [class]="winnerTitleClass()">{{ winnerTitle() }}</h2>
+
+    @if (winnerSymbolImage(); as winnerSymbol) {
+    <img [class]="winnerSymbolClass()" [src]="winnerSymbol" alt="" aria-hidden="true" />
+    }
+
+    <a class="winner-back-button" [class.winner-back-button--gaming]="theme() === 'gaming'"
+        [class.winner-back-button--da-projects]="theme() === 'da-projects'"
+        [class.winner-back-button--foods]="theme() === 'foods'" routerLink="/">{{ winnerBackButtonLabel() }}</a>
+</article>

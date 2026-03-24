@@ -1,5 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { GameResultGameOverPanelComponent } from './components/game-result-game-over-panel.component';
+import { GameResultWinnerPanelComponent } from './components/game-result-winner-panel.component';
+import { PlayerId, SymbolDefinition, ThemeId, WinnerId } from './themes/theme.model';
+import { DEFAULT_THEME_ID, THEME_CONFIGS, isThemeId } from './themes/theme.registry';
 
 interface MemoryCard {
   id: number;
@@ -8,20 +12,11 @@ interface MemoryCard {
   frontFilter: string | null;
 }
 
-type PlayerId = 'blue' | 'orange';
 type BoardSizeId = 16 | 24 | 36;
-type ThemeId = 'code-vibes' | 'gaming' | 'da-projects' | 'foods';
-type WinnerId = PlayerId | 'draw';
-
-interface SymbolDefinition {
-  key: string;
-  frontImage: string;
-  frontFilter: string | null;
-}
 
 @Component({
   selector: 'app-game',
-  imports: [RouterLink],
+  imports: [RouterLink, GameResultGameOverPanelComponent, GameResultWinnerPanelComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,90 +27,6 @@ export class GameComponent {
   private hideMismatchTimeoutId: number | null = null;
   private gameOverRevealTimeoutId: number | null = null;
   private symbolPool: SymbolDefinition[] = [];
-
-  private readonly codeVibeSymbolPool: SymbolDefinition[] = [
-    { key: 'symbol-01', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22.png', frontFilter: null },
-    { key: 'symbol-02', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (1).png', frontFilter: null },
-    { key: 'symbol-03', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (2).png', frontFilter: null },
-    { key: 'symbol-04', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (3).png', frontFilter: null },
-    { key: 'symbol-05', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (4).png', frontFilter: null },
-    { key: 'symbol-06', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (5).png', frontFilter: null },
-    { key: 'symbol-07', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (6).png', frontFilter: null },
-    { key: 'symbol-08', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (7).png', frontFilter: null },
-    { key: 'symbol-09', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (8).png', frontFilter: null },
-    { key: 'symbol-10', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (9).png', frontFilter: null },
-    { key: 'symbol-11', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (10).png', frontFilter: null },
-    { key: 'symbol-12', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (11).png', frontFilter: null },
-    { key: 'symbol-13', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (12).png', frontFilter: null },
-    { key: 'symbol-14', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (13).png', frontFilter: null },
-    { key: 'symbol-15', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (14).png', frontFilter: null },
-    { key: 'symbol-16', frontImage: '/assets/gamethemes/codevibe/cards/Front.png', frontFilter: null },
-    { key: 'symbol-17', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (1).png', frontFilter: 'hue-rotate(115deg) saturate(1.2)' },
-    { key: 'symbol-18', frontImage: '/assets/gamethemes/codevibe/cards/Property 1=Component 22 (2).png', frontFilter: 'hue-rotate(245deg) saturate(1.15)' },
-  ];
-
-  private readonly gamesThemeSymbolPool: SymbolDefinition[] = [
-    { key: 'symbol-01', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (1).png', frontFilter: null },
-    { key: 'symbol-02', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (2).png', frontFilter: null },
-    { key: 'symbol-03', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (3).png', frontFilter: null },
-    { key: 'symbol-04', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (4).png', frontFilter: null },
-    { key: 'symbol-05', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (5).png', frontFilter: null },
-    { key: 'symbol-06', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (6).png', frontFilter: null },
-    { key: 'symbol-07', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (8).png', frontFilter: null },
-    { key: 'symbol-08', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (9).png', frontFilter: null },
-    { key: 'symbol-09', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (10).png', frontFilter: null },
-    { key: 'symbol-10', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (11).png', frontFilter: null },
-    { key: 'symbol-11', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (12).png', frontFilter: null },
-    { key: 'symbol-12', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (13).png', frontFilter: null },
-    { key: 'symbol-13', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (14).png', frontFilter: null },
-    { key: 'symbol-14', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (15).png', frontFilter: null },
-    { key: 'symbol-15', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (16).png', frontFilter: null },
-    { key: 'symbol-16', frontImage: '/assets/gamethemes/gamestheme/Front.png', frontFilter: null },
-    { key: 'symbol-17', frontImage: '/assets/gamethemes/gamestheme/circle.png', frontFilter: null },
-    { key: 'symbol-18', frontImage: '/assets/gamethemes/gamestheme/Property 1=Component 2 (1).png', frontFilter: 'hue-rotate(145deg) saturate(1.15)' },
-  ];
-
-  private readonly daProjectsSymbolPool: SymbolDefinition[] = [
-    { key: 'symbol-01', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2.png', frontFilter: null },
-    { key: 'symbol-02', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (1).png', frontFilter: null },
-    { key: 'symbol-03', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (2).png', frontFilter: null },
-    { key: 'symbol-04', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (3).png', frontFilter: null },
-    { key: 'symbol-05', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (4).png', frontFilter: null },
-    { key: 'symbol-06', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (5).png', frontFilter: null },
-    { key: 'symbol-07', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (6).png', frontFilter: null },
-    { key: 'symbol-08', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (7).png', frontFilter: null },
-    { key: 'symbol-09', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (8).png', frontFilter: null },
-    { key: 'symbol-10', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (9).png', frontFilter: null },
-    { key: 'symbol-11', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (10).png', frontFilter: null },
-    { key: 'symbol-12', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (11).png', frontFilter: null },
-    { key: 'symbol-13', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (12).png', frontFilter: null },
-    { key: 'symbol-14', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (13).png', frontFilter: null },
-    { key: 'symbol-15', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (14).png', frontFilter: null },
-    { key: 'symbol-16', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (15).png', frontFilter: null },
-    { key: 'symbol-17', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (16).png', frontFilter: null },
-    { key: 'symbol-18', frontImage: '/assets/gamethemes/daprojects/Property 1=Component 2 (1).png', frontFilter: 'hue-rotate(140deg) saturate(1.2)' },
-  ];
-
-  private readonly foodsSymbolPool: SymbolDefinition[] = [
-    { key: 'symbol-01', frontImage: '/assets/gamethemes/food/Property 1=Component 3.png', frontFilter: null },
-    { key: 'symbol-02', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (1).png', frontFilter: null },
-    { key: 'symbol-03', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (2).png', frontFilter: null },
-    { key: 'symbol-04', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (3).png', frontFilter: null },
-    { key: 'symbol-05', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (4).png', frontFilter: null },
-    { key: 'symbol-06', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (5).png', frontFilter: null },
-    { key: 'symbol-07', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (6).png', frontFilter: null },
-    { key: 'symbol-08', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (7).png', frontFilter: null },
-    { key: 'symbol-09', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (8).png', frontFilter: null },
-    { key: 'symbol-10', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (9).png', frontFilter: null },
-    { key: 'symbol-11', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (10).png', frontFilter: null },
-    { key: 'symbol-12', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (11).png', frontFilter: null },
-    { key: 'symbol-13', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (12).png', frontFilter: null },
-    { key: 'symbol-14', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (13).png', frontFilter: null },
-    { key: 'symbol-15', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (14).png', frontFilter: null },
-    { key: 'symbol-16', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (15).png', frontFilter: null },
-    { key: 'symbol-17', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (16).png', frontFilter: null },
-    { key: 'symbol-18', frontImage: '/assets/gamethemes/food/Property 1=Component 3 (2).png', frontFilter: 'hue-rotate(28deg) saturate(1.2)' },
-  ];
 
   protected readonly theme = signal<ThemeId>('code-vibes');
 
@@ -149,19 +60,20 @@ export class GameComponent {
   protected readonly blueScore = signal(0);
   protected readonly orangeScore = signal(0);
 
+  private readonly activeThemeConfig = computed(() => THEME_CONFIGS[this.theme()]);
+  private readonly activeThemeResult = computed(() => this.activeThemeConfig().result);
+
   protected readonly currentPlayerSymbol = computed(() => {
-    if (this.theme() === 'gaming') return this.whitePlayerImage();
+    if (this.activeThemeConfig().usesWhiteCurrentPlayerSymbol) {
+      return this.whitePlayerImage();
+    }
+
     return this.currentPlayer() === 'blue' ? this.bluePlayerImage() : this.orangePlayerImage();
   });
 
-  protected readonly currentPlayerBadgeClass = computed(() => {
-    if (this.theme() === 'gaming') {
-      return this.currentPlayer() === 'blue'
-        ? 'player-indicator-badge player-indicator-badge--blue'
-        : 'player-indicator-badge player-indicator-badge--orange';
-    }
-    return 'player-indicator-badge';
-  });
+  protected readonly currentPlayerBadgeClass = computed(
+    () => this.activeThemeConfig().header.currentPlayerBadgeClass[this.currentPlayer()],
+  );
 
   protected readonly activeExitButtonImage = computed(() => {
     if (this.isExitButtonHovered() && this.exitButtonHoverImage() !== null) {
@@ -191,59 +103,12 @@ export class GameComponent {
   });
 
   protected readonly showResultOverlay = computed(
-    () =>
-      (this.theme() === 'code-vibes' || this.theme() === 'gaming' || this.theme() === 'da-projects' || this.theme() === 'foods') &&
-      this.gameStage() !== 'playing',
+    () => this.gameStage() !== 'playing',
   );
 
   protected readonly winnerTitle = computed(() => {
-    const currentWinner = this.winner();
-
-    if (this.theme() === 'gaming') {
-      if (currentWinner === 'blue') {
-        return 'Blue Player';
-      }
-
-      if (currentWinner === 'orange') {
-        return 'Orange Player';
-      }
-
-      return 'Draw';
-    }
-
-    if (this.theme() === 'da-projects') {
-      if (currentWinner === 'blue') {
-        return 'Blue Player';
-      }
-
-      if (currentWinner === 'orange') {
-        return 'Orange Player';
-      }
-
-      return 'Draw';
-    }
-
-    if (this.theme() === 'foods') {
-      if (currentWinner === 'blue') {
-        return 'Blue Player';
-      }
-
-      if (currentWinner === 'orange') {
-        return 'Orange Player';
-      }
-
-      return 'Draw';
-    }
-
-    if (currentWinner === 'blue') {
-      return 'BLUE PLAYER';
-    }
-
-    if (currentWinner === 'orange') {
-      return 'ORANGE PLAYER';
-    }
-
-    return "IT'S A DRAW";
+    const currentWinner = this.winner() ?? 'draw';
+    return this.activeThemeResult().winnerTitles[currentWinner];
   });
 
   protected readonly winnerTitleClass = computed(() => {
@@ -261,59 +126,20 @@ export class GameComponent {
   });
 
   protected readonly winnerSymbolImage = computed(() => {
-    if (this.theme() === 'gaming') {
-      return this.trophyImage();
-    }
-
-    if (this.theme() === 'da-projects') {
-      if (this.winner() === 'blue') {
-        return '/assets/gamethemes/winblueborder.png';
-      }
-
-      if (this.winner() === 'orange') {
-        return '/assets/gamethemes/winorangeborder.png';
-      }
-
-      return null;
-    }
-
-    if (this.theme() === 'foods') {
-      if (this.winner() === 'blue') {
-        return '/assets/gamethemes/winnerblue.png';
-      }
-
-      if (this.winner() === 'orange') {
-        return '/assets/gamethemes/winnerorange.png';
-      }
-
-      return null;
-    }
-
-    const currentWinner = this.winner();
-
-    if (currentWinner === 'blue') {
-      return '/assets/gamethemes/winnerblue.png';
-    }
-
-    if (currentWinner === 'orange') {
-      return '/assets/gamethemes/winnerorange.png';
-    }
-
-    return null;
+    const currentWinner = this.winner() ?? 'draw';
+    return this.activeThemeResult().winnerSymbols[currentWinner];
   });
 
-  protected readonly winnerSymbolClass = computed(() =>
-    this.theme() === 'gaming'
-      ? 'winner-symbol winner-symbol--gaming'
-      : this.theme() === 'da-projects'
-        ? 'winner-symbol winner-symbol--da-projects'
-        : this.theme() === 'foods'
-          ? 'winner-symbol winner-symbol--foods'
-        : 'winner-symbol',
-  );
+  protected readonly winnerSymbolClass = computed(() => this.activeThemeResult().winnerSymbolClass);
 
-  protected readonly winnerBackButtonLabel = computed(() =>
-    this.theme() === 'gaming' || this.theme() === 'foods' ? 'Home' : 'Back to start',
+  protected readonly winnerBackButtonLabel = computed(() => this.activeThemeResult().winnerBackButtonLabel);
+  protected readonly shouldShowWinnerConfetti = computed(() => this.activeThemeResult().showConfetti && this.showConfettiImage());
+  protected readonly resultThemeLabelImage = computed(() => this.activeThemeResult().gameOverLabelImage);
+  protected readonly gameOverBlueScoreImage = computed(
+    () => this.activeThemeResult().gameOverBlueScoreImage ?? this.bluePlayerImage(),
+  );
+  protected readonly gameOverOrangeScoreImage = computed(
+    () => this.activeThemeResult().gameOverOrangeScoreImage ?? this.orangePlayerImage(),
   );
 
   constructor() {
@@ -496,22 +322,7 @@ export class GameComponent {
   private initializeTheme(): void {
     const selectedTheme = this.route.snapshot.queryParamMap.get('theme');
 
-    if (selectedTheme === 'gaming') {
-      this.theme.set('gaming');
-      return;
-    }
-
-    if (selectedTheme === 'da-projects') {
-      this.theme.set('da-projects');
-      return;
-    }
-
-    if (selectedTheme === 'foods') {
-      this.theme.set('foods');
-      return;
-    }
-
-    this.theme.set('code-vibes');
+    this.theme.set(isThemeId(selectedTheme) ? selectedTheme : DEFAULT_THEME_ID);
   }
 
   private initializeStartingPlayer(): void {
@@ -573,59 +384,19 @@ export class GameComponent {
     this.winner.set(null);
     this.showConfettiImage.set(true);
 
-    if (this.theme() === 'gaming') {
-      this.symbolPool = this.gamesThemeSymbolPool;
-      this.backImage.set('/assets/gamethemes/gamestheme/hiddengame.png');
-      this.bluePlayerImage.set('/assets/gamethemes/gamestheme/blue.png');
-      this.orangePlayerImage.set('/assets/gamethemes/gamestheme/orange.png');
-      this.whitePlayerImage.set('/assets/gamethemes/gamestheme/white.png');
-      this.exitButtonImage.set('/assets/gamethemes/gamestheme/exit.png');
-      this.exitButtonHoverImage.set(null);
-      this.backButtonImage.set('/assets/gamethemes/gamestheme/back.png');
-      this.backButtonHoverImage.set('/assets/gamethemes/gamestheme/backhover.png');
-      this.yesQuitButtonImage.set('/assets/gamethemes/gamestheme/yesquitthegame.png');
-      this.yesQuitButtonHoverImage.set(null);
-      return;
-    }
-
-    if (this.theme() === 'da-projects') {
-      this.symbolPool = this.daProjectsSymbolPool;
-      this.backImage.set('/assets/gamethemes/daprojects/Frame 727.png');
-      this.bluePlayerImage.set('/assets/gamethemes/gamestheme/blue.png');
-      this.orangePlayerImage.set('/assets/gamethemes/gamestheme/orange.png');
-      this.exitButtonImage.set('/assets/gamethemes/daprojects/exit.png');
-      this.exitButtonHoverImage.set('/assets/gamethemes/daprojects/exithover.png');
-      this.backButtonImage.set('/assets/gamethemes/daprojects/back.png');
-      this.backButtonHoverImage.set('/assets/gamethemes/daprojects/backhover.png');
-      this.yesQuitButtonImage.set('/assets/gamethemes/daprojects/bye.png');
-      this.yesQuitButtonHoverImage.set('/assets/gamethemes/daprojects/byehover.png');
-      return;
-    }
-
-    if (this.theme() === 'foods') {
-      this.symbolPool = this.foodsSymbolPool;
-      this.backImage.set('/assets/gamethemes/food/hidden.png');
-      this.bluePlayerImage.set('/assets/gamethemes/gamestheme/blue.png');
-      this.orangePlayerImage.set('/assets/gamethemes/gamestheme/orange.png');
-      this.exitButtonImage.set('/assets/gamethemes/food/exit.png');
-      this.exitButtonHoverImage.set('/assets/gamethemes/food/exithover.png');
-      this.backButtonImage.set('/assets/gamethemes/food/back.png');
-      this.backButtonHoverImage.set('/assets/gamethemes/food/backhover.png');
-      this.yesQuitButtonImage.set('/assets/gamethemes/food/exit.png');
-      this.yesQuitButtonHoverImage.set('/assets/gamethemes/food/exithover.png');
-      return;
-    }
-
-    this.symbolPool = this.codeVibeSymbolPool;
-    this.backImage.set('/assets/gamethemes/codevibe/cards/hidden.png');
-    this.bluePlayerImage.set('/assets/gamethemes/codevibe/blue.png');
-    this.orangePlayerImage.set('/assets/gamethemes/codevibe/orange.png');
-    this.whitePlayerImage.set('/assets/gamethemes/gamestheme/white.png');
-    this.exitButtonImage.set('/assets/gamethemes/codevibe/exit.png');
-    this.exitButtonHoverImage.set(null);
-    this.backButtonImage.set('/assets/gamethemes/codevibe/back.png');
-    this.backButtonHoverImage.set(null);
-    this.yesQuitButtonImage.set(null);
-    this.yesQuitButtonHoverImage.set(null);
+    const config = this.activeThemeConfig();
+    this.symbolPool = config.symbolPool;
+    this.backImage.set(config.assets.backImage);
+    this.bluePlayerImage.set(config.assets.bluePlayerImage);
+    this.orangePlayerImage.set(config.assets.orangePlayerImage);
+    this.whitePlayerImage.set(config.assets.whitePlayerImage);
+    this.exitButtonImage.set(config.assets.exitButtonImage);
+    this.exitButtonHoverImage.set(config.assets.exitButtonHoverImage);
+    this.backButtonImage.set(config.assets.backButtonImage);
+    this.backButtonHoverImage.set(config.assets.backButtonHoverImage);
+    this.yesQuitButtonImage.set(config.assets.yesQuitButtonImage);
+    this.yesQuitButtonHoverImage.set(config.assets.yesQuitButtonHoverImage);
+    this.confettiImage.set(config.assets.confettiImage);
+    this.trophyImage.set(config.assets.trophyImage);
   }
 }
