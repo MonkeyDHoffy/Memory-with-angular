@@ -2,6 +2,9 @@
 @use "./styles/tokens";
 @use "./styles/typography" as type;
 
+@import '@fontsource/klee-one/400.css';
+@import '@fontsource/klee-one/600.css';
+
 /* Global style reset and design tokens for the memory app start page */
 
 * {
@@ -19,4 +22,399 @@ body {
 
 a {
   color: inherit;
+}
+
+.game-page--covered {
+  visibility: hidden;
+}
+
+.result-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+  background: #303338;
+}
+
+.result-panel {
+  width: min(100%, 900px);
+  text-align: center;
+  color: #e6edf1;
+}
+
+.result-panel--game-over {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.game-over-title {
+  margin: 0;
+  font-size: clamp(2.7rem, 10vw, 5.2rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: #6ff7e4;
+  text-shadow: 0 2px 0 rgba(36, 184, 169, 0.7), 0 0 18px rgba(87, 209, 197, 0.28);
+}
+
+.result-subtitle {
+  margin: 0;
+  color: #e5e8eb;
+  font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+}
+
+.result-scoreline {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: #3e4c52;
+  padding: 0.7rem 0.95rem;
+  border-radius: 2px;
+  font-weight: 700;
+}
+
+.result-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.result-score-icon {
+  width: 1rem;
+  height: 1rem;
+  object-fit: contain;
+}
+
+.result-score--blue {
+  color: #25b1ff;
+}
+
+.result-score--orange {
+  color: #ff9a3d;
+}
+
+.result-panel--winner {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.winner-confetti {
+  width: min(100%, 920px);
+  height: clamp(130px, 21vh, 230px);
+  object-fit: contain;
+}
+
+.winner-subtitle {
+  margin: 0;
+  font-size: clamp(1.35rem, 3.8vw, 2.8rem);
+  color: #f1f3f5;
+}
+
+.winner-title {
+  margin: 0;
+  font-size: clamp(2.2rem, 7.1vw, 4.7rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.winner-title--blue {
+  color: #30aefe;
+}
+
+.winner-title--orange {
+  color: #ff9a3d;
+}
+
+.winner-title--draw {
+  color: #6ff7e4;
+}
+
+.winner-symbol {
+  width: clamp(108px, 16vw, 176px);
+  height: auto;
+}
+
+.winner-symbol--da-projects {
+  width: clamp(118px, 16vw, 170px);
+}
+
+.winner-back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 10rem;
+  padding: 0.72rem 1.1rem;
+  border: 1px solid #57d1c5;
+  background: rgba(87, 209, 197, 0.18);
+  color: #e5eef0;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.exit-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 29, 32, 0.62);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.exit-dialog {
+  width: min(100%, 440px);
+  background: #ececec;
+  color: #2f3338;
+  padding: 2rem 1.6rem;
+  text-align: center;
+}
+
+.exit-dialog h2 {
+  margin: 0 0 1.8rem;
+  font-size: clamp(1.05rem, 3.2vw, 1.1rem);
+  line-height: 1.35;
+}
+
+.exit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.action-image {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: clamp(128px, 20vw, 180px);
+  aspect-ratio: 3.2 / 1;
+  line-height: 0;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.action-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 0.7rem 1rem;
+  min-width: 7.4rem;
+  font-weight: 700;
+  border: 1px solid var(--cv-accent);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.action-primary {
+  color: #dffaf4;
+  background: var(--cv-accent);
+}
+
+.action-secondary {
+  color: #37c8b6;
+  background: transparent;
+}
+
+.result-overlay--gaming {
+  background: #30596d;
+}
+
+.result-panel--gaming {
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+}
+
+.result-overlay--gaming .game-over-title {
+  font-size: clamp(3rem, 10vw, 6rem);
+  color: #ff1f87;
+  text-transform: uppercase;
+  text-shadow: 4px 4px 0 rgba(97, 18, 66, 0.45);
+}
+
+.result-overlay--gaming .result-subtitle {
+  font-size: clamp(1.2rem, 2.3vw, 1.6rem);
+  color: #f2f5f7;
+}
+
+.result-overlay--gaming .result-scoreline {
+  gap: 1rem;
+  background: #ffffff;
+  color: #304b56;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+}
+
+.result-overlay--gaming .result-panel--winner {
+  gap: 0.9rem;
+}
+
+.result-overlay--gaming .winner-subtitle {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+.result-overlay--gaming .winner-title {
+  font-size: clamp(2.5rem, 6vw, 4.2rem);
+  text-transform: none;
+  text-shadow: 3px 3px 0 rgba(17, 52, 69, 0.55);
+}
+
+.winner-symbol--gaming {
+  width: clamp(170px, 22vw, 280px);
+}
+
+.winner-back-button--gaming {
+  min-width: 5.6rem;
+  padding: 0.46rem 0.85rem;
+  border-color: #ff1f87;
+  background: rgba(48, 89, 109, 0.2);
+  color: #f2f5f7;
+  border-radius: 6px;
+}
+
+.result-overlay--da-projects {
+  background:
+    radial-gradient(900px 420px at 50% -10%, rgba(79, 135, 255, 0.14), transparent 70%),
+    linear-gradient(180deg, #18213a 0%, #141c2e 100%);
+}
+
+.result-panel--da-projects {
+  font-family: 'Figtree', 'Segoe UI', sans-serif;
+}
+
+.result-theme-label {
+  width: clamp(42px, 7vw, 62px);
+  height: auto;
+}
+
+.result-overlay--da-projects .result-panel--game-over,
+.result-overlay--da-projects .result-panel--winner {
+  gap: 0.95rem;
+}
+
+.result-overlay--da-projects .game-over-title {
+  font-size: clamp(2.8rem, 9vw, 5.6rem);
+  color: #f1f5fb;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-shadow: 0 6px 18px rgba(79, 135, 255, 0.24);
+}
+
+.result-overlay--da-projects .result-subtitle {
+  color: #c8d6ee;
+}
+
+.result-overlay--da-projects .result-scoreline {
+  background: #22324d;
+  border: 1px solid rgba(79, 135, 255, 0.35);
+  border-radius: 8px;
+}
+
+.result-overlay--da-projects .winner-subtitle {
+  color: #d6e1f3;
+  font-size: clamp(1.2rem, 2.7vw, 1.9rem);
+}
+
+.result-overlay--da-projects .winner-title {
+  font-size: clamp(2.4rem, 6vw, 4.1rem);
+  text-transform: none;
+  text-shadow: none;
+}
+
+.winner-back-button--da-projects {
+  min-width: 9.4rem;
+  border-color: #4f87ff;
+  background: rgba(79, 135, 255, 0.14);
+  color: #eff4ff;
+  border-radius: 8px;
+}
+
+.result-overlay--foods {
+  font-family: 'Klee One', 'Segoe UI', sans-serif;
+}
+
+.result-overlay--foods.result-overlay--stage-game-over {
+  background: #fb842a;
+}
+
+.result-overlay--foods .result-panel--game-over {
+  gap: 1.2rem;
+}
+
+.result-overlay--foods .game-over-title {
+  font-family: 'Klee One', 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: clamp(3rem, 10vw, 6rem);
+  color: #fffef9;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-shadow: 4px 4px 0 rgba(179, 89, 28, 0.38);
+}
+
+.result-overlay--foods .result-subtitle {
+  font-family: 'Klee One', 'Segoe UI', sans-serif;
+  color: #fffef8;
+  font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+}
+
+.result-overlay--foods .result-scoreline {
+  background: #ffffff;
+  border-radius: 0;
+  padding: 0.55rem 0.85rem;
+  gap: 1rem;
+}
+
+.result-overlay--foods .result-panel--winner {
+  gap: 1rem;
+}
+
+.result-overlay--foods.result-overlay--stage-winner {
+  background: #f5f5f5;
+}
+
+.result-overlay--foods .result-panel--winner {
+  color: #a85815;
+}
+
+.result-overlay--foods .winner-subtitle {
+  font-family: 'Klee One', 'Segoe UI', sans-serif;
+  color: #b4621b;
+  font-size: clamp(1.45rem, 2.7vw, 2rem);
+}
+
+.result-overlay--foods .winner-title {
+  font-family: 'Klee One', 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 6vw, 4.2rem);
+  text-transform: none;
+  text-shadow: none;
+}
+
+.winner-symbol--foods {
+  width: clamp(160px, 20vw, 230px);
+  padding: 1rem;
+  background: #f5e3cf;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+}
+
+.winner-back-button--foods {
+  min-width: 4.6rem;
+  padding: 0.38rem 0.72rem;
+  border: 0;
+  border-radius: 6px;
+  background: #fb842a;
+  color: #fffef9;
+  box-shadow: 0 3px 8px rgba(172, 89, 30, 0.28);
 }

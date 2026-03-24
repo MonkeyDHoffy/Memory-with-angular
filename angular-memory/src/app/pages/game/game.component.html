@@ -1,6 +1,6 @@
 <main class="game-page" [class.theme-code-vibe]="theme() === 'code-vibes'" [class.theme-gaming]="theme() === 'gaming'"
     [class.theme-da-projects]="theme() === 'da-projects'" [class.theme-foods]="theme() === 'foods'"
-    aria-label="Memory game board">
+    [class.game-page--covered]="showResultOverlay()" aria-label="Memory game board">
     <header class="game-header">
         <section class="scoreboard" aria-label="Player scores">
             <span class="score score-blue">
@@ -13,7 +13,8 @@
             </span>
         </section>
 
-        <p class="current-player" aria-live="polite">
+        <p class="current-player" [class.current-player--blue]="currentPlayer() === 'blue'"
+            [class.current-player--orange]="currentPlayer() === 'orange'" aria-live="polite">
             Current player:
             <span [class]="currentPlayerBadgeClass()">
                 <img class="player-indicator" [src]="currentPlayerSymbol()" alt="" aria-hidden="true" />
@@ -42,6 +43,59 @@
         }
     </section>
 </main>
+
+@if (showResultOverlay()) {
+<section class="result-overlay" [class.result-overlay--code-vibe]="theme() === 'code-vibes'"
+    [class.result-overlay--gaming]="theme() === 'gaming'"
+    [class.result-overlay--da-projects]="theme() === 'da-projects'" [class.result-overlay--foods]="theme() === 'foods'"
+    [class.result-overlay--stage-game-over]="gameStage() === 'game-over'"
+    [class.result-overlay--stage-winner]="gameStage() === 'winner'" aria-live="polite">
+    @if (gameStage() === 'game-over') {
+    <article class="result-panel result-panel--game-over" [class.result-panel--gaming]="theme() === 'gaming'"
+        [class.result-panel--da-projects]="theme() === 'da-projects'" [class.result-panel--foods]="theme() === 'foods'">
+        @if (theme() === 'da-projects') {
+        <img class="result-theme-label" src="/assets/gamethemes/daprojects/label (1).png" alt="" aria-hidden="true" />
+        }
+        <h2 class="game-over-title">Game over</h2>
+        <p class="result-subtitle">Final score</p>
+        <p class="result-scoreline">
+            <span class="result-score result-score--blue">
+                <img class="result-score-icon"
+                    [src]="theme() === 'gaming' || theme() === 'da-projects' || theme() === 'foods' ? '/assets/gamethemes/gamestheme/blue.png' : bluePlayerImage()"
+                    alt="" aria-hidden="true" />
+                {{ blueScore() }}
+            </span>
+            <span class="result-score result-score--orange">
+                <img class="result-score-icon"
+                    [src]="theme() === 'gaming' || theme() === 'da-projects' || theme() === 'foods' ? '/assets/gamethemes/gamestheme/orange.png' : orangePlayerImage()"
+                    alt="" aria-hidden="true" />
+                {{ orangeScore() }}
+            </span>
+        </p>
+    </article>
+    } @else {
+    <article class="result-panel result-panel--winner" [class.result-panel--gaming]="theme() === 'gaming'"
+        [class.result-panel--da-projects]="theme() === 'da-projects'" [class.result-panel--foods]="theme() === 'foods'">
+        @if (theme() === 'code-vibes' && showConfettiImage()) {
+        <img class="winner-confetti" [src]="confettiImage()" (error)="hideConfettiImage()" alt="" aria-hidden="true" />
+        }
+        @if (theme() === 'da-projects') {
+        <img class="result-theme-label" src="/assets/gamethemes/daprojects/label (1).png" alt="" aria-hidden="true" />
+        }
+        <p class="winner-subtitle">The winner is</p>
+        <h2 [class]="winnerTitleClass()">{{ winnerTitle() }}</h2>
+
+        @if (winnerSymbolImage(); as winnerSymbol) {
+        <img [class]="winnerSymbolClass()" [src]="winnerSymbol" alt="" aria-hidden="true" />
+        }
+
+        <a class="winner-back-button" [class.winner-back-button--gaming]="theme() === 'gaming'"
+            [class.winner-back-button--da-projects]="theme() === 'da-projects'"
+            [class.winner-back-button--foods]="theme() === 'foods'" routerLink="/">{{ winnerBackButtonLabel() }}</a>
+    </article>
+    }
+</section>
+}
 
 @if (showExitDialog()) {
 <section class="exit-overlay" role="dialog" aria-modal="true" aria-labelledby="exit-title">

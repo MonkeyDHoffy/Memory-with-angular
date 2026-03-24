@@ -72,13 +72,22 @@
   padding: clamp(1rem, 3vw, 1.8rem);
 }
 
-.game-page.theme-foods .game-header {
-  background: #f0e5d9;
+.game-page.theme-foods .game-header,
+.game-page.theme-da-projects .game-header {
   border-radius: 6px;
   padding: 0.65rem 0.9rem;
 }
 
-.game-page.theme-foods .scoreboard {
+.game-page.theme-foods .game-header {
+  background: #f0e5d9;
+}
+
+.game-page.theme-da-projects .game-header {
+  background: #22324d;
+}
+
+.game-page.theme-foods .scoreboard,
+.game-page.theme-da-projects .scoreboard {
   border-radius: 4px;
 }
 
@@ -133,6 +142,14 @@
   font-weight: 600;
 }
 
+.current-player--blue {
+  color: var(--cv-blue);
+}
+
+.current-player--orange {
+  color: var(--cv-orange);
+}
+
 .player-indicator {
   width: 1.15rem;
   height: 1.15rem;
@@ -162,10 +179,16 @@
 
 .exit-button {
   justify-self: end;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 0;
   background: transparent;
   padding: 0;
+  width: clamp(132px, 18vw, 168px);
+  aspect-ratio: 4 / 1;
+  line-height: 0;
+  flex: 0 0 auto;
   cursor: pointer;
   transition: transform 180ms ease, filter 180ms ease;
 }
@@ -176,8 +199,9 @@
 
 .exit-button img {
   display: block;
-  width: clamp(132px, 18vw, 168px);
-  height: auto;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .board {
@@ -241,71 +265,6 @@
 
 .memory-card.is-flipped .card-front {
   transform: rotateY(0deg);
-}
-
-.exit-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(26, 29, 32, 0.62);
-  display: grid;
-  place-items: center;
-  padding: 1rem;
-}
-
-.exit-dialog {
-  width: min(100%, 440px);
-  background: #ececec;
-  color: #2f3338;
-  padding: 2rem 1.6rem;
-  text-align: center;
-}
-
-.exit-dialog h2 {
-  margin: 0 0 1.8rem;
-  font-size: clamp(1.05rem, 3.2vw, 1.1rem);
-  line-height: 1.35;
-}
-
-.exit-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.action-image {
-  border: 0;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-}
-
-.action-image img {
-  display: block;
-  width: clamp(128px, 20vw, 180px);
-  height: auto;
-}
-
-.action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  padding: 0.7rem 1rem;
-  min-width: 7.4rem;
-  font-weight: 700;
-  border: 1px solid var(--cv-accent);
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.action-primary {
-  color: #dffaf4;
-  background: var(--cv-accent);
-}
-
-.action-secondary {
-  color: #37c8b6;
-  background: transparent;
 }
 
 @media (max-width: 900px) {

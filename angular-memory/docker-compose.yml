@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  memory-site:
+    container_name: memory-site
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    restart: unless-stopped

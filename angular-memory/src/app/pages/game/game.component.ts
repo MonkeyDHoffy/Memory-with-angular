@@ -11,6 +11,7 @@ interface MemoryCard {
 type PlayerId = 'blue' | 'orange';
 type BoardSizeId = 16 | 24 | 36;
 type ThemeId = 'code-vibes' | 'gaming' | 'da-projects' | 'foods';
+type WinnerId = PlayerId | 'draw';
 
 interface SymbolDefinition {
   key: string;
@@ -29,6 +30,7 @@ export class GameComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private hideMismatchTimeoutId: number | null = null;
+  private gameOverRevealTimeoutId: number | null = null;
   private symbolPool: SymbolDefinition[] = [];
 
   private readonly codeVibeSymbolPool: SymbolDefinition[] = [
@@ -133,6 +135,11 @@ export class GameComponent {
   protected readonly isExitButtonHovered = signal(false);
   protected readonly isBackButtonHovered = signal(false);
   protected readonly isYesQuitButtonHovered = signal(false);
+  protected readonly gameStage = signal<'playing' | 'game-over' | 'winner'>('playing');
+  protected readonly winner = signal<WinnerId | null>(null);
+  protected readonly confettiImage = signal('/assets/gamethemes/codevibe/confetti.png');
+  protected readonly trophyImage = signal('/assets/gamethemes/pockal%201.png');
+  protected readonly showConfettiImage = signal(true);
   protected readonly showExitDialog = signal(false);
   protected readonly revealedCardIds = signal<Set<number>>(new Set<number>());
   protected readonly matchedCardIds = signal<Set<number>>(new Set<number>());
@@ -183,6 +190,132 @@ export class GameComponent {
     return baseImage;
   });
 
+  protected readonly showResultOverlay = computed(
+    () =>
+      (this.theme() === 'code-vibes' || this.theme() === 'gaming' || this.theme() === 'da-projects' || this.theme() === 'foods') &&
+      this.gameStage() !== 'playing',
+  );
+
+  protected readonly winnerTitle = computed(() => {
+    const currentWinner = this.winner();
+
+    if (this.theme() === 'gaming') {
+      if (currentWinner === 'blue') {
+        return 'Blue Player';
+      }
+
+      if (currentWinner === 'orange') {
+        return 'Orange Player';
+      }
+
+      return 'Draw';
+    }
+
+    if (this.theme() === 'da-projects') {
+      if (currentWinner === 'blue') {
+        return 'Blue Player';
+      }
+
+      if (currentWinner === 'orange') {
+        return 'Orange Player';
+      }
+
+      return 'Draw';
+    }
+
+    if (this.theme() === 'foods') {
+      if (currentWinner === 'blue') {
+        return 'Blue Player';
+      }
+
+      if (currentWinner === 'orange') {
+        return 'Orange Player';
+      }
+
+      return 'Draw';
+    }
+
+    if (currentWinner === 'blue') {
+      return 'BLUE PLAYER';
+    }
+
+    if (currentWinner === 'orange') {
+      return 'ORANGE PLAYER';
+    }
+
+    return "IT'S A DRAW";
+  });
+
+  protected readonly winnerTitleClass = computed(() => {
+    const currentWinner = this.winner();
+
+    if (currentWinner === 'blue') {
+      return 'winner-title winner-title--blue';
+    }
+
+    if (currentWinner === 'orange') {
+      return 'winner-title winner-title--orange';
+    }
+
+    return 'winner-title winner-title--draw';
+  });
+
+  protected readonly winnerSymbolImage = computed(() => {
+    if (this.theme() === 'gaming') {
+      return this.trophyImage();
+    }
+
+    if (this.theme() === 'da-projects') {
+      if (this.winner() === 'blue') {
+        return '/assets/gamethemes/winblueborder.png';
+      }
+
+      if (this.winner() === 'orange') {
+        return '/assets/gamethemes/winorangeborder.png';
+      }
+
+      return null;
+    }
+
+    if (this.theme() === 'foods') {
+      if (this.winner() === 'blue') {
+        return '/assets/gamethemes/winnerblue.png';
+      }
+
+      if (this.winner() === 'orange') {
+        return '/assets/gamethemes/winnerorange.png';
+      }
+
+      return null;
+    }
+
+    const currentWinner = this.winner();
+
+    if (currentWinner === 'blue') {
+      return '/assets/gamethemes/winnerblue.png';
+    }
+
+    if (currentWinner === 'orange') {
+      return '/assets/gamethemes/winnerorange.png';
+    }
+
+    return null;
+  });
+
+  protected readonly winnerSymbolClass = computed(() =>
+    this.theme() === 'gaming'
+      ? 'winner-symbol winner-symbol--gaming'
+      : this.theme() === 'da-projects'
+        ? 'winner-symbol winner-symbol--da-projects'
+        : this.theme() === 'foods'
+          ? 'winner-symbol winner-symbol--foods'
+        : 'winner-symbol',
+  );
+
+  protected readonly winnerBackButtonLabel = computed(() =>
+    this.theme() === 'gaming' || this.theme() === 'foods' ? 'Home' : 'Back to start',
+  );
+
   constructor() {
     this.initializeTheme();
     this.applyThemeAssets();
@@ -194,11 +327,16 @@ export class GameComponent {
       if (this.hideMismatchTimeoutId !== null) {
         window.clearTimeout(this.hideMismatchTimeoutId);
       }
+
+      if (this.gameOverRevealTimeoutId !== null) {
+        window.clearTimeout(this.gameOverRevealTimeoutId);
+      }
     });
   }
 
   protected revealCard(card: MemoryCard): void {
     if (
+      this.gameStage() !== 'playing' ||
       this.isResolvingTurn() ||
       this.showExitDialog() ||
       this.matchedCardIds().has(card.id) ||
@@ -222,15 +360,23 @@ export class GameComponent {
     const secondCard = deck[secondCardId];
 
     if (firstCard.symbolKey === secondCard.symbolKey) {
+      let matchedSizeAfterUpdate = 0;
+
       this.matchedCardIds.update((current) => {
         const next = new Set(current);
         next.add(firstCardId);
         next.add(secondCardId);
+        matchedSizeAfterUpdate = next.size;
         return next;
       });
 
       this.selectedCardIds.set([]);
       this.addPointForCurrentPlayer();
+
+      if (matchedSizeAfterUpdate === deck.length) {
+        this.startGameOverSequence();
+      }
+
       return;
     }
 
@@ -258,6 +404,7 @@ export class GameComponent {
   protected isCardDisabled(cardId: number): boolean {
     return (
       this.isResolvingTurn() ||
+      this.gameStage() !== 'playing' ||
       this.showExitDialog() ||
       this.matchedCardIds().has(cardId) ||
       this.selectedCardIds().includes(cardId)
@@ -265,6 +412,10 @@ export class GameComponent {
   }
 
   protected openExitDialog(): void {
+    if (this.gameStage() !== 'playing') {
+      return;
+    }
+
     this.showExitDialog.set(true);
   }
 
@@ -284,6 +435,37 @@ export class GameComponent {
 
   protected setYesQuitButtonHover(isHovered: boolean): void {
     this.isYesQuitButtonHovered.set(isHovered);
+  }
+
+  protected hideConfettiImage(): void {
+    this.showConfettiImage.set(false);
+  }
+
+  private startGameOverSequence(): void {
+    if (this.gameStage() !== 'playing') {
+      return;
+    }
+
+    this.showConfettiImage.set(true);
+    this.gameStage.set('game-over');
+
+    this.gameOverRevealTimeoutId = window.setTimeout(() => {
+      this.winner.set(this.resolveWinner());
+      this.gameStage.set('winner');
+      this.gameOverRevealTimeoutId = null;
+    }, 1450);
+  }
+
+  private resolveWinner(): WinnerId {
+    if (this.blueScore() > this.orangeScore()) {
+      return 'blue';
+    }
+
+    if (this.orangeScore() > this.blueScore()) {
+      return 'orange';
+    }
+
+    return 'draw';
   }
 
   private addPointForCurrentPlayer(): void {
@@ -387,6 +569,9 @@ export class GameComponent {
     this.isExitButtonHovered.set(false);
     this.isBackButtonHovered.set(false);
     this.isYesQuitButtonHovered.set(false);
+    this.gameStage.set('playing');
+    this.winner.set(null);
+    this.showConfettiImage.set(true);
 
     if (this.theme() === 'gaming') {
       this.symbolPool = this.gamesThemeSymbolPool;
@@ -426,8 +611,8 @@ export class GameComponent {
       this.exitButtonHoverImage.set('/assets/gamethemes/food/exithover.png');
       this.backButtonImage.set('/assets/gamethemes/food/back.png');
       this.backButtonHoverImage.set('/assets/gamethemes/food/backhover.png');
-      this.yesQuitButtonImage.set(null);
-      this.yesQuitButtonHoverImage.set(null);
+      this.yesQuitButtonImage.set('/assets/gamethemes/food/exit.png');
+      this.yesQuitButtonHoverImage.set('/assets/gamethemes/food/exithover.png');
       return;
     }
 
