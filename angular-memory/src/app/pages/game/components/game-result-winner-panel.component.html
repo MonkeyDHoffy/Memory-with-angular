@@ -13,7 +13,12 @@
     <img [class]="winnerSymbolClass()" [src]="winnerSymbol" alt="" aria-hidden="true" />
     }
 
-    <a class="winner-back-button" [class.winner-back-button--gaming]="theme() === 'gaming'"
-        [class.winner-back-button--da-projects]="theme() === 'da-projects'"
-        [class.winner-back-button--foods]="theme() === 'foods'" routerLink="/">{{ winnerBackButtonLabel() }}</a>
+    <div class="winner-actions">
+        <a class="winner-back-button" [class.winner-back-button--gaming]="theme() === 'gaming'"
+            [class.winner-back-button--da-projects]="theme() === 'da-projects'"
+            [class.winner-back-button--foods]="theme() === 'foods'" routerLink="/">{{ winnerBackButtonLabel() }}</a>
+        <button type="button" class="winner-back-button" [class.winner-back-button--gaming]="theme() === 'gaming'"
+            [class.winner-back-button--da-projects]="theme() === 'da-projects'"
+            [class.winner-back-button--foods]="theme() === 'foods'" (click)="onPlayAgainClick()">Play again</button>
+    </div>
 </article>

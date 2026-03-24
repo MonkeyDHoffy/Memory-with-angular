@@ -154,6 +154,25 @@ a {
   color: #e5eef0;
   text-decoration: none;
   font-weight: 700;
+  cursor: pointer;
+  transition: transform 160ms ease, filter 160ms ease;
+}
+
+.winner-back-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.winner-back-button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.winner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
 }
 
 .exit-overlay {

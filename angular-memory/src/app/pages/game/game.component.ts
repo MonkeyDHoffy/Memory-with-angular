@@ -2,17 +2,18 @@ import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signa
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { GameResultGameOverPanelComponent } from './components/game-result-game-over-panel.component';
 import { GameResultWinnerPanelComponent } from './components/game-result-winner-panel.component';
+import { HoldKeyShortcut } from './debug/hold-key-shortcut';
 import { PlayerId, SymbolDefinition, ThemeId, WinnerId } from './themes/theme.model';
 import { DEFAULT_THEME_ID, THEME_CONFIGS, isThemeId } from './themes/theme.registry';
-
-interface MemoryCard {
-  id: number;
-  symbolKey: string;
-  frontImage: string;
-  frontFilter: string | null;
-}
-
-type BoardSizeId = 16 | 24 | 36;
+import {
+  BoardSizeId,
+  MemoryCard,
+  createShuffledDeck,
+  parseBoardSize,
+  parseStartingPlayer,
+  pickRandomPlayerWinner,
+  resolveWinnerByScore,
+} from './utils/game-helpers';
 
 @Component({
   selector: 'app-game',
@@ -27,6 +28,12 @@ export class GameComponent {
   private hideMismatchTimeoutId: number | null = null;
   private gameOverRevealTimeoutId: number | null = null;
   private symbolPool: SymbolDefinition[] = [];
+  private readonly debugWinnerShortcut = new HoldKeyShortcut({
+    key: 'w',
+    holdDurationMs: 3000,
+    shouldTrigger: () => this.gameStage() === 'playing',
+    onHoldComplete: () => this.forceFinishGameWithRandomWinner(),
+  });
 
   protected readonly theme = signal<ThemeId>('code-vibes');
 
@@ -56,6 +63,7 @@ export class GameComponent {
   protected readonly matchedCardIds = signal<Set<number>>(new Set<number>());
   protected readonly selectedCardIds = signal<number[]>([]);
   protected readonly isResolvingTurn = signal(false);
+  protected readonly startingPlayer = signal<PlayerId>('blue');
   protected readonly currentPlayer = signal<PlayerId>('blue');
   protected readonly blueScore = signal(0);
   protected readonly orangeScore = signal(0);
@@ -143,20 +151,17 @@ export class GameComponent {
   );
 
   constructor() {
+    this.debugWinnerShortcut.start();
     this.initializeTheme();
     this.applyThemeAssets();
     this.initializeStartingPlayer();
     this.initializeBoardSize();
-    this.cards.set(this.createShuffledDeck(this.boardSize()));
+    this.cards.set(createShuffledDeck(this.symbolPool, this.boardSize()));
 
     this.destroyRef.onDestroy(() => {
-      if (this.hideMismatchTimeoutId !== null) {
-        window.clearTimeout(this.hideMismatchTimeoutId);
-      }
+      this.clearGameTimeouts();
 
-      if (this.gameOverRevealTimeoutId !== null) {
-        window.clearTimeout(this.gameOverRevealTimeoutId);
-      }
+      this.debugWinnerShortcut.stop();
     });
   }
 
@@ -267,6 +272,20 @@ export class GameComponent {
     this.showConfettiImage.set(false);
   }
 
+  protected replayGame(): void {
+    this.clearGameTimeouts();
+    this.isResolvingTurn.set(false);
+    this.showExitDialog.set(false);
+    this.revealedCardIds.set(new Set<number>());
+    this.matchedCardIds.set(new Set<number>());
+    this.selectedCardIds.set([]);
+    this.blueScore.set(0);
+    this.orangeScore.set(0);
+    this.currentPlayer.set(this.startingPlayer());
+    this.applyThemeAssets();
+    this.cards.set(createShuffledDeck(this.symbolPool, this.boardSize()));
+  }
+
   private startGameOverSequence(): void {
     if (this.gameStage() !== 'playing') {
       return;
@@ -276,22 +295,10 @@ export class GameComponent {
     this.gameStage.set('game-over');
 
     this.gameOverRevealTimeoutId = window.setTimeout(() => {
-      this.winner.set(this.resolveWinner());
+      this.winner.set(resolveWinnerByScore(this.blueScore(), this.orangeScore()));
       this.gameStage.set('winner');
       this.gameOverRevealTimeoutId = null;
     }, 1450);
-  }
-
-  private resolveWinner(): WinnerId {
-    if (this.blueScore() > this.orangeScore()) {
-      return 'blue';
-    }
-
-    if (this.orangeScore() > this.blueScore()) {
-      return 'orange';
-    }
-
-    return 'draw';
   }
 
   private addPointForCurrentPlayer(): void {
@@ -308,15 +315,8 @@ export class GameComponent {
   }
 
   private initializeBoardSize(): void {
-    const queryValue = this.route.snapshot.queryParamMap.get('boardSize');
-    const parsedBoardSize = Number(queryValue);
-
-    if (parsedBoardSize === 24 || parsedBoardSize === 36) {
-      this.boardSize.set(parsedBoardSize);
-      return;
-    }
-
-    this.boardSize.set(16);
+    const boardSizeParam = this.route.snapshot.queryParamMap.get('boardSize');
+    this.boardSize.set(parseBoardSize(boardSizeParam));
   }
 
   private initializeTheme(): void {
@@ -326,54 +326,9 @@ export class GameComponent {
   }
 
   private initializeStartingPlayer(): void {
-    const selectedPlayer = this.route.snapshot.queryParamMap.get('player');
-
-    if (selectedPlayer === 'orange') {
-      this.currentPlayer.set('orange');
-      return;
-    }
-
-    this.currentPlayer.set('blue');
-  }
-
-  private createShuffledDeck(boardSize: BoardSizeId): MemoryCard[] {
-    const pairCount = boardSize / 2;
-    const selectedSymbols = this.symbolPool.slice(0, pairCount);
-
-    const pairedDeck = selectedSymbols.flatMap((symbol) => [
-      {
-        symbolKey: symbol.key,
-        frontImage: symbol.frontImage,
-        frontFilter: symbol.frontFilter,
-      },
-      {
-        symbolKey: symbol.key,
-        frontImage: symbol.frontImage,
-        frontFilter: symbol.frontFilter,
-      },
-    ]);
-
-    const shuffled = this.shuffleCards(pairedDeck);
-
-    return shuffled.map((card, id) => ({
-      id,
-      symbolKey: card.symbolKey,
-      frontImage: card.frontImage,
-      frontFilter: card.frontFilter,
-    }));
-  }
-
-  private shuffleCards(cards: Array<{ symbolKey: string; frontImage: string; frontFilter: string | null }>): Array<{ symbolKey: string; frontImage: string; frontFilter: string | null }> {
-    const shuffled = [...cards];
-
-    for (let index = shuffled.length - 1; index > 0; index -= 1) {
-      const randomIndex = Math.floor(Math.random() * (index + 1));
-      const currentCard = shuffled[index];
-      shuffled[index] = shuffled[randomIndex];
-      shuffled[randomIndex] = currentCard;
-    }
-
-    return shuffled;
+    const selectedPlayer = parseStartingPlayer(this.route.snapshot.queryParamMap.get('player'));
+    this.startingPlayer.set(selectedPlayer);
+    this.currentPlayer.set(selectedPlayer);
   }
 
   private applyThemeAssets(): void {
@@ -398,5 +353,33 @@ export class GameComponent {
     this.yesQuitButtonHoverImage.set(config.assets.yesQuitButtonHoverImage);
     this.confettiImage.set(config.assets.confettiImage);
     this.trophyImage.set(config.assets.trophyImage);
+  }
+
+  private forceFinishGameWithRandomWinner(): void {
+    if (this.gameStage() !== 'playing') {
+      return;
+    }
+
+    this.clearGameTimeouts();
+
+    this.isResolvingTurn.set(false);
+    this.selectedCardIds.set([]);
+    this.showExitDialog.set(false);
+    this.showConfettiImage.set(true);
+
+    this.winner.set(pickRandomPlayerWinner());
+    this.gameStage.set('winner');
+  }
+
+  private clearGameTimeouts(): void {
+    if (this.hideMismatchTimeoutId !== null) {
+      window.clearTimeout(this.hideMismatchTimeoutId);
+      this.hideMismatchTimeoutId = null;
+    }
+
+    if (this.gameOverRevealTimeoutId !== null) {
+      window.clearTimeout(this.gameOverRevealTimeoutId);
+      this.gameOverRevealTimeoutId = null;
+    }
   }
 }

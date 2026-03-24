@@ -18,9 +18,14 @@ export class GameResultWinnerPanelComponent {
   readonly winnerSymbolImage = input<string | null>(null);
   readonly winnerSymbolClass = input.required<string>();
   readonly winnerBackButtonLabel = input.required<string>();
+  readonly playAgainClicked = output<void>();
   readonly confettiImageError = output<void>();
 
   protected onConfettiImageError(): void {
     this.confettiImageError.emit();
+  }
+
+  protected onPlayAgainClick(): void {
+    this.playAgainClicked.emit();
   }
 }

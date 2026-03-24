@@ -59,7 +59,7 @@
         [confettiImage]="confettiImage()" [resultThemeLabelImage]="resultThemeLabelImage()"
         [winnerTitleClass]="winnerTitleClass()" [winnerTitle]="winnerTitle()" [winnerSymbolImage]="winnerSymbolImage()"
         [winnerSymbolClass]="winnerSymbolClass()" [winnerBackButtonLabel]="winnerBackButtonLabel()"
-        (confettiImageError)="hideConfettiImage()" />
+        (playAgainClicked)="replayGame()" (confettiImageError)="hideConfettiImage()" />
     }
 </section>
 }
