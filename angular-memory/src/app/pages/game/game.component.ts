@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { GameResultGameOverPanelComponent } from './components/game-result-game-over-panel.component';
 import { GameResultWinnerPanelComponent } from './components/game-result-winner-panel.component';
 import { HoldKeyShortcut } from './debug/hold-key-shortcut';
+import { FooterComponent } from '../../shared/footer/footer.component';
 import { PlayerId, SymbolDefinition, ThemeId, WinnerId } from './themes/theme.model';
 import { DEFAULT_THEME_ID, THEME_CONFIGS, isThemeId } from './themes/theme.registry';
 import {
@@ -17,7 +18,7 @@ import {
 
 @Component({
   selector: 'app-game',
-  imports: [RouterLink, GameResultGameOverPanelComponent, GameResultWinnerPanelComponent],
+  imports: [RouterLink, GameResultGameOverPanelComponent, GameResultWinnerPanelComponent, FooterComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

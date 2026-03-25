@@ -1,5 +1,6 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FooterComponent } from '../../shared/footer/footer.component';
 
 type ThemeId = 'code-vibes' | 'gaming' | 'da-projects' | 'foods';
 type PlayerId = 'blue' | 'orange';
@@ -28,7 +29,7 @@ type SelectionSummary = {
 
 @Component({
   selector: 'app-settings',
-  imports: [RouterLink],
+  imports: [RouterLink, FooterComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
 })
